@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="ant-recfg" default="build-jar" basedir=".">
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="dist.dir" value="${basedir}/dist" />
+
+	<path id="jarfiles">
+		<fileset dir="${basedir}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<delete dir="${dist.dir}" quiet="true" />
+		<delete dir="${build.dir}" quiet="true" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="build-jar" depends="init">
+		<echo>compile source</echo>
+		<javac srcdir="${basedir}/src" destdir="${build.dir}/" includeantruntime="false" encoding="utf-8" target="1.7" debug="on" debuglevel="lines,vars,source">
+			<include name="**/*.java" />
+			<classpath refid="jarfiles" />
+		</javac>
+		<copy todir="${build.dir}/src">
+			<fileset dir="${basedir}/src/" />
+		</copy>
+		<echo>build jar</echo>
+		<jar destfile="${dist.dir}/${ant.project.name}.jar">
+			<fileset dir="${build.dir}/">
+				<include name="**/*.*" />
+			</fileset>
+			<manifest>
+				<attribute name="Class-Path" value=" " />
+			</manifest>
+		</jar>
+		<delete dir="${build.dir}" quiet="true" />
+	</target>
+</project>

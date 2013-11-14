@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+******* rebuild by ant-recfg. *******
+--><configuration>
+
+	<appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+		<!-- encoders are assigned by default the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+		<encoder>
+			<pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="FILE">
+		<file>/home/tomcat/log/accounting.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/home/tomcat/log/accounting.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender> 
+
+	<logger level="INFO" name="org"/>
+
+	<logger level="INFO" name="net.sf"/>
+
+	<logger level="DEBUG" name="com.chinaj"/>
+
+	<root level="DEBUG">
+		
+		<appender-ref ref="FILE"/>
+	</root>
+
+</configuration>
