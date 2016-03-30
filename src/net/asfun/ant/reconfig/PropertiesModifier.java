@@ -1,12 +1,12 @@
 package net.asfun.ant.reconfig;
 
+import net.asfun.ant.reconfig.FileAlteration.AlterationIndicator;
+import net.asfun.ant.reconfig.Operate.Operation;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-
-import net.asfun.ant.reconfig.FileAlteration.AlterationIndicator;
-import net.asfun.ant.reconfig.Operate.Operation;
 
 
 
@@ -66,12 +66,13 @@ public class PropertiesModifier implements ConfigModifier{
 	}
 	
 	private String formatProperty(String kv) {
+        String cv = ValueUtil.computeValue(kv);
 		try {
-			return new String(kv.getBytes(), "ISO8859-1");
+			return new String(cv.getBytes(), "ISO8859-1");
 		} catch (UnsupportedEncodingException e) {
 			System.err.println(e.getMessage());
 		}
-		return kv;
+		return cv;
 	}
 	
 	public void writeTo(String file) {

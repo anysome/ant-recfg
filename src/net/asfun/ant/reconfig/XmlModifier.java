@@ -1,8 +1,15 @@
 package net.asfun.ant.reconfig;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
+import net.asfun.ant.reconfig.FileAlteration.AlterationIndicator;
+import net.asfun.ant.reconfig.Operate.Operation;
+import org.apache.tools.ant.filters.StringInputStream;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -17,18 +24,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import net.asfun.ant.reconfig.FileAlteration.AlterationIndicator;
-import net.asfun.ant.reconfig.Operate.Operation;
-
-import org.apache.tools.ant.filters.StringInputStream;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 
 
@@ -88,9 +86,10 @@ public class XmlModifier implements ConfigModifier{
 				switch (oper) {
 				case REPLACE :
 					node = (Node) eval(xpath, XPathConstants.NODE);
-					Node df = formNode(value);
+                    String cv = ValueUtil.computeValue(value);
+					Node df = formNode(cv);
 					node.getParentNode().replaceChild(df, node);
-					Log.print("\treplace `" + xpath +"` node to `" + value +"`");
+					Log.print("\treplace `" + xpath +"` node to `" + cv +"`");
 					break;
 				case UPDATE:
 					nodes = (NodeList) eval(xpath, XPathConstants.NODESET);
@@ -99,8 +98,9 @@ public class XmlModifier implements ConfigModifier{
 						if ( spot == null ) {
 							System.err.println("can't upate xml element without attr specified");
 						} else {
-							node.getAttributes().getNamedItem(spot).setNodeValue(value);
-							Log.print("\tupdate `" + xpath +"` node's attribute `"+ spot +"` to `" + value +"`");
+                            String cv1 = ValueUtil.computeValue(value);
+							node.getAttributes().getNamedItem(spot).setNodeValue(cv1);
+							Log.print("\tupdate `" + xpath +"` node's attribute `"+ spot +"` to `" + cv1 +"`");
 						}
 					}
 					break;
@@ -117,7 +117,8 @@ public class XmlModifier implements ConfigModifier{
 					nodes = (NodeList) eval(xpath, XPathConstants.NODESET);
 					for(int i=0; i< nodes.getLength(); i++) {
 						node = nodes.item(i);
-						Node app = formNode(value);
+                        String cv2 = ValueUtil.computeValue(value);
+						Node app = formNode(cv2);
 						node.getParentNode().insertBefore(app, node.getNextSibling());
 						Log.print("\tappend `" + xpath +"` node with " + app);
 					}
